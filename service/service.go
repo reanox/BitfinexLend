@@ -3,8 +3,11 @@ package service
 import (
 	"context"
 	"fmt"
+
 	"github.com/reanox/BitfinexLend/service/apiserver"
-	"github.com/reanox/BitfinexLend/service/dbservice"
+	"github.com/reanox/BitfinexLend/service/bitfinexService"
+
+	// "github.com/reanox/BitfinexLend/service/dbservice"
 	"log"
 	"net/http"
 	"os"
@@ -14,8 +17,11 @@ import (
 
 func RunAllService() {
 
-	log.Println("Starting DB Service...")
-	dbservice.Init()
+	// log.Println("Starting DB Service...")
+	// dbservice.Init()
+
+	log.Println("Starting Bitfinex Lend Service...")
+	bitfinexService.Init()
 
 	log.Println("Starting API Service...")
 	server := apiserver.New()
