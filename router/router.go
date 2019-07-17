@@ -1,9 +1,11 @@
 package router
 
 import (
+	"net/http"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"net/http"
+	v1 "github.com/reanox/BitfinexLend/controllers/api/v1"
 )
 
 // New router
@@ -19,5 +21,9 @@ func New() *gin.Engine {
 		c.String(http.StatusOK, "Server is running")
 	})
 
+	APIv1 := router.Group("/api/v1")
+	{
+		APIv1.POST("/new", v1.New)
+	}
 	return router
 }

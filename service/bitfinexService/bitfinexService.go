@@ -59,10 +59,18 @@ func Start() {
 	go func() {
 		for {
 			for _, c := range BFClients {
-				offers, _ := c.GetAllOffers()
-				log.Println(offers)
+				timestamp := time.Now().Unix()
+				offers, _ := c.GetAllFundingOffers()
+				for _, offer := range offers {
+					offerT, _ := strconv.ParseInt(offer.Timestamp, 10, 64)
+					if timestamp-offerT >= offerRemoveTime {
+						result, _ := c.CancelOffer(offer.ID)
+						log.Printf("Remove offer %v", result)
+						time.Sleep(10 * time.Second)
+					}
+				}
 			}
-			time.Sleep(1 * time.Minute)
+			time.Sleep(60 * time.Second)
 		}
 	}()
 }

@@ -39,12 +39,12 @@ func (bfc *BitfinexClient) GetFundingBalance() (float64, error) {
 	return 0.0, err
 }
 
-func (bfc *BitfinexClient) GetAllOffers() ([]bitfinex.Order, error) {
-	offers, err := bfc.Client.Orders.All()
+func (bfc *BitfinexClient) GetAllFundingOffers() ([]bitfinex.ActiveOffer, error) {
+	offers, err := bfc.Client.MarginFunding.Offers()
 	return offers, err
 }
 
-func (bfc *BitfinexClient) CancelOffer(orderID int64) error {
-	err := bfc.Client.Orders.Cancel(orderID)
-	return err
+func (bfc *BitfinexClient) CancelOffer(orderID int64) (bitfinex.MarginOffer, error) {
+	v, err := bfc.Client.MarginFunding.Cancel(orderID)
+	return v, err
 }
