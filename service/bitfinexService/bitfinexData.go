@@ -5,8 +5,8 @@ import (
 )
 
 var miniumLendNumber = 50.0
-var AnnualizedRate30d = 75.0
-var AnnualizedRateMin = 15.0
+var annualizedRate30d = 75.0
+var annualizedRateMin = 15.0
 
 type BitfinexClient struct {
 	APIKey       string

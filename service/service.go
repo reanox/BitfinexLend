@@ -21,7 +21,7 @@ func RunAllService() {
 	// dbservice.Init()
 
 	log.Println("Starting Bitfinex Lend Service...")
-	bitfinexService.Init()
+	bitfinexService.Start()
 
 	log.Println("Starting API Service...")
 	server := apiserver.New()

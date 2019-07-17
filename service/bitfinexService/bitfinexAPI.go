@@ -32,8 +32,19 @@ func (bfc *BitfinexClient) GetFundingBalance() (float64, error) {
 	for _, b := range balance {
 		if b.Type == "deposit" && b.Currency == "usd" {
 			available, _ := strconv.ParseFloat(b.Available, 64)
-			return strconv.ParseFloat(fmt.Sprintf("%.2f", available), 64)
+			s := fmt.Sprintf("%.3f", available)
+			return strconv.ParseFloat(s[:len(s)-1], 64)
 		}
 	}
 	return 0.0, err
+}
+
+func (bfc *BitfinexClient) GetAllOffers() ([]bitfinex.Order, error) {
+	offers, err := bfc.Client.Orders.All()
+	return offers, err
+}
+
+func (bfc *BitfinexClient) CancelOffer(orderID int64) error {
+	err := bfc.Client.Orders.Cancel(orderID)
+	return err
 }

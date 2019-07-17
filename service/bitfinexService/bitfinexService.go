@@ -8,14 +8,15 @@ import (
 	"github.com/bitfinexcom/bitfinex-api-go/v1"
 )
 
-func Init() {
+func Start() {
+	// Auto lending
 	go func() {
 		for {
 			for _, c := range BFClients {
 				lendbook, _ := c.GetLendBook("usd", 50, 50)
 				var lendRate float64
 				lendBidRate, _ := strconv.ParseFloat(lendbook.Bids[0].Rate, 64)
-				if lendBidRate >= AnnualizedRate30d {
+				if lendBidRate >= annualizedRate30d {
 					lendRate = lendBidRate
 				}
 				if lendRate == 0.0 {
@@ -27,7 +28,7 @@ func Init() {
 							break
 						}
 						lendRate, _ = strconv.ParseFloat(ask.Rate, 64)
-						if totalAmount > 20000.0 {
+						if totalAmount > 10000.0 {
 							break
 						}
 
@@ -38,11 +39,11 @@ func Init() {
 				fundingBalance, _ := c.GetFundingBalance()
 				log.Println("Get funding balance...", fundingBalance)
 
-				if fundingBalance <= miniumLendNumber || lendRate < AnnualizedRateMin {
+				if fundingBalance <= miniumLendNumber || lendRate < annualizedRateMin {
 					log.Println("Balance or Rate is low then minium.")
 				} else {
 					var offer bitfinex.MarginOffer
-					if lendRate >= AnnualizedRate30d {
+					if lendRate >= annualizedRate30d {
 						offer, _ = c.CreateLend("USD", fundingBalance, lendRate, 30)
 					} else {
 						offer, _ = c.CreateLend("USD", fundingBalance, lendRate, 2)
@@ -51,6 +52,17 @@ func Init() {
 				}
 				time.Sleep(10 * time.Second)
 			}
+		}
+	}()
+
+	// Cancel offer
+	go func() {
+		for {
+			for _, c := range BFClients {
+				offers, _ := c.GetAllOffers()
+				log.Println(offers)
+			}
+			time.Sleep(1 * time.Minute)
 		}
 	}()
 }
