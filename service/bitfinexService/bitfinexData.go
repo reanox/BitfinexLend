@@ -36,7 +36,14 @@ func CreateNewBFClient(APIKey string, APISecret string) *BitfinexClient {
 	return c
 }
 
-func removeBfcs(index int) {
+func removeBfcs(b *BitfinexClient) {
+	index := 0
+	for i, _b := range BFClients {
+		if _b == b {
+			index = i
+			break
+		}
+	}
 	BFClients = append(BFClients[:index], BFClients[index+1:]...)
 }
 

@@ -13,7 +13,7 @@ func Start() {
 	go func() {
 		for {
 			for _, c := range BFClients {
-				lendbook, _ := c.GetLendBook("usd", 50, 50)
+				lendbook := c.GetLendBook("usd", 50, 50)
 				var lendRate float64
 				lendBidRate, _ := strconv.ParseFloat(lendbook.Bids[0].Rate, 64)
 				if lendBidRate >= annualizedRate30d {
@@ -36,7 +36,7 @@ func Start() {
 				}
 				log.Println("Get lend rate...", lendRate)
 
-				fundingBalance, _ := c.GetFundingBalance()
+				fundingBalance := c.GetFundingBalance()
 				log.Println("Get funding balance...", fundingBalance)
 
 				if fundingBalance <= miniumLendNumber || lendRate < annualizedRateMin {
@@ -44,9 +44,9 @@ func Start() {
 				} else {
 					var offer bitfinex.MarginOffer
 					if lendRate >= annualizedRate30d {
-						offer, _ = c.CreateLend("USD", fundingBalance, lendRate, 30)
+						offer = c.CreateLend("USD", fundingBalance, lendRate, 30)
 					} else {
-						offer, _ = c.CreateLend("USD", fundingBalance, lendRate, 2)
+						offer = c.CreateLend("USD", fundingBalance, lendRate, 2)
 					}
 					log.Println("Create new offer:", offer)
 				}
@@ -60,11 +60,11 @@ func Start() {
 		for {
 			for _, c := range BFClients {
 				timestamp := time.Now().Unix()
-				offers, _ := c.GetAllFundingOffers()
+				offers := c.GetAllFundingOffers()
 				for _, offer := range offers {
 					offerT, _ := strconv.ParseInt(offer.Timestamp, 10, 64)
 					if timestamp-offerT >= offerRemoveTime {
-						result, _ := c.CancelOffer(offer.ID)
+						result := c.CancelOffer(offer.ID)
 						log.Printf("Remove offer %v", result)
 						time.Sleep(10 * time.Second)
 					}
