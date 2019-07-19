@@ -8,7 +8,7 @@ import (
 // New a server
 func New() *http.Server {
 	server := &http.Server{
-		Addr:    ":8080",
+		Addr:    ":8777",
 		Handler: router.New(),
 	}
 	return server
