@@ -12,39 +12,55 @@ func NewClient(APIKey string, APISecret string) *bitfinex.Client {
 	return client
 }
 
-func (bfc *BitfinexClient) GetLendBook(currency string, limitBids, limitAsks int) (bitfinex.Lendbook, error) {
+func (bfc *BitfinexClient) GetLendBook(currency string, limitBids, limitAsks int) bitfinex.Lendbook {
 	book, err := bfc.Client.Lendbook.Get(currency, limitBids, limitAsks)
-	return book, err
+	if err != nil {
+		fmt.Println("GetLendBook:", err)
+		return bitfinex.Lendbook{}
+	}
+	return book
 }
 
-func (bfc *BitfinexClient) Lend(currency string, limitBids, limitAsks int) (bitfinex.Lendbook, error) {
-	book, err := bfc.Client.Lendbook.Get(currency, limitBids, limitAsks)
-	return book, err
-}
-
-func (bfc *BitfinexClient) CreateLend(currency string, amount, rate float64, period int) (bitfinex.MarginOffer, error) {
+func (bfc *BitfinexClient) CreateLend(currency string, amount, rate float64, period int) bitfinex.MarginOffer {
 	offer, err := bfc.Client.MarginFunding.NewLend(currency, amount, rate, period)
-	return offer, err
+	if err != nil {
+		fmt.Println("CreateLend:", err)
+		return bitfinex.MarginOffer{}
+	}
+	return offer
 }
 
-func (bfc *BitfinexClient) GetFundingBalance() (float64, error) {
+func (bfc *BitfinexClient) GetFundingBalance() float64 {
 	balance, err := bfc.Client.Balances.All()
+	if err != nil {
+		fmt.Println("GetFundingBalance:", err)
+		return 0.0
+	}
 	for _, b := range balance {
 		if b.Type == "deposit" && b.Currency == "usd" {
 			available, _ := strconv.ParseFloat(b.Available, 64)
 			s := fmt.Sprintf("%.3f", available)
-			return strconv.ParseFloat(s[:len(s)-1], 64)
+			funding, _ := strconv.ParseFloat(s[:len(s)-1], 64)
+			return funding
 		}
 	}
-	return 0.0, err
+	return 0.0
 }
 
-func (bfc *BitfinexClient) GetAllFundingOffers() ([]bitfinex.ActiveOffer, error) {
+func (bfc *BitfinexClient) GetAllFundingOffers() []bitfinex.ActiveOffer {
 	offers, err := bfc.Client.MarginFunding.Offers()
-	return offers, err
+	if err != nil {
+		fmt.Println("GetAllFundingOffers:", err)
+		return []bitfinex.ActiveOffer{}
+	}
+	return offers
 }
 
-func (bfc *BitfinexClient) CancelOffer(orderID int64) (bitfinex.MarginOffer, error) {
+func (bfc *BitfinexClient) CancelOffer(orderID int64) bitfinex.MarginOffer {
 	v, err := bfc.Client.MarginFunding.Cancel(orderID)
-	return v, err
+	if err != nil {
+		fmt.Println("CancelOffer:", err)
+		return bitfinex.MarginOffer{}
+	}
+	return v
 }
