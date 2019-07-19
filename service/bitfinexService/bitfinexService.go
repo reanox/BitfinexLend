@@ -62,8 +62,9 @@ func Start() {
 				timestamp := time.Now().Unix()
 				offers, _ := c.GetAllFundingOffers()
 				for _, offer := range offers {
-					offerT, _ := strconv.ParseInt(offer.Timestamp, 10, 64)
-					if timestamp-offerT >= offerRemoveTime {
+					offerT, _ := strconv.ParseFloat(offer.Timestamp, 64)
+					log.Println(timestamp, offerT)
+					if timestamp-int64(offerT) >= offerRemoveTime {
 						result, _ := c.CancelOffer(offer.ID)
 						log.Printf("Remove offer %v", result)
 						time.Sleep(10 * time.Second)
