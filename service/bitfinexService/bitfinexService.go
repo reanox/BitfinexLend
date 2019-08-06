@@ -12,6 +12,7 @@ func Start() {
 	// Auto lending
 	go func() {
 		for {
+			t := time.NewTicker(time.Minute * time.Duration(1))
 			for _, c := range BFClients {
 				lendbook := c.GetLendBook("usd", 50, 50)
 				var lendRate float64
@@ -50,7 +51,7 @@ func Start() {
 					}
 					log.Println("Create new offer:", offer)
 				}
-				time.Sleep(10 * time.Second)
+				<-t.C
 			}
 		}
 	}()
@@ -58,6 +59,7 @@ func Start() {
 	// Cancel offer
 	go func() {
 		for {
+			t := time.NewTicker(time.Second * time.Duration(60))
 			for _, c := range BFClients {
 				timestamp := time.Now().Unix()
 				offers := c.GetAllFundingOffers()
@@ -71,7 +73,7 @@ func Start() {
 					}
 				}
 			}
-			time.Sleep(60 * time.Second)
+			<-t.C
 		}
 	}()
 }
