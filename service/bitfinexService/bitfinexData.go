@@ -8,7 +8,7 @@ import (
 
 var miniumLendNumber = 50.0
 var annualizedRate30d = 75.0
-var annualizedRateMin = 15.0
+var annualizedRateMin = 10.0
 
 // A effective offer is 10 min
 var offerRemoveTime int64 = 600
