@@ -68,11 +68,11 @@ func Start() {
 					if timestamp-int64(offerT) >= offerRemoveTime {
 						result := c.CancelOffer(offer.ID)
 						log.Printf("Remove offer %v", result)
-						time.Sleep(10 * time.Second)
+						time.Sleep(time.Second * time.Duration(30))
 					}
 				}
 			}
-			t := time.NewTicker(time.Second * time.Duration(60))
+			t := time.NewTicker(time.Minute * time.Duration(5))
 			<-t.C
 		}
 	}()
