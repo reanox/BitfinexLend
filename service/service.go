@@ -4,10 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/reanox/BitfinexLend/service/apiserver"
-	"github.com/reanox/BitfinexLend/service/bitfinexService"
-
-	// "github.com/reanox/BitfinexLend/service/dbservice"
+	"github.com/b2234913/BitfinexLend/service/apiserver"
+	"github.com/b2234913/BitfinexLend/service/bitfinexService"
+	"github.com/b2234913/BitfinexLend/service/dbservice"
 	"log"
 	"net/http"
 	"os"
@@ -25,6 +24,9 @@ func RunAllService() {
 
 	log.Println("Starting API Service...")
 	server := apiserver.New()
+
+	log.Println("Starting DB Service...")
+	DBsevice := dbservice.Init()
 
 	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
