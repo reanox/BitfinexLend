@@ -20,7 +20,7 @@ func Init() {
 	DB = pg.Connect(&pg.Options{
 		User:     "postgres",
 		Password: "postgres",
-		Database: "db",
+		Database: "postgres",
 	})
 	DB.AddQueryHook(dbLogger{})
 }

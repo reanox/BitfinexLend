@@ -4,7 +4,7 @@ import (
 	"log"
 	"strconv"
 	"time"
-
+	"math"
 	"github.com/bitfinexcom/bitfinex-api-go/v1"
 )
 
@@ -36,7 +36,7 @@ func Start() {
 				}
 				log.Println("Get lend rate...", lendRate)
 
-				fundingBalance := c.GetFundingBalance()
+				fundingBalance := math.Floor(c.GetFundingBalance()*100)/100
 				log.Println("Get funding balance...", fundingBalance)
 
 				if fundingBalance <= miniumLendNumber || lendRate < annualizedRateMin {
