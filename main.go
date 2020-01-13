@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/reanox/BitfinexLend/service"
+	"github.com/b2234913/BitfinexLend/service"
 )
 
 func main() {
