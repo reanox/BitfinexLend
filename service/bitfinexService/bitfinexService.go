@@ -15,6 +15,9 @@ func Start() {
 			for _, c := range BFClients {
 				lendbook := c.GetLendBook("usd", 50, 50)
 				var lendRate float64
+				if len(lendbook.Bids) == 0 {
+					continue
+				}
 				lendBidRate, _ := strconv.ParseFloat(lendbook.Bids[0].Rate, 64)
 				if lendBidRate >= annualizedRate30d {
 					lendRate = lendBidRate
