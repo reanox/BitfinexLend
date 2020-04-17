@@ -8,4 +8,7 @@ require (
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-pg/pg v8.0.4+incompatible
 	github.com/gorilla/websocket v1.4.0 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/joho/godotenv v1.3.0
+	mellium.im/sasl v0.2.1 // indirect
 )

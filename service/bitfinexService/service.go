@@ -6,13 +6,27 @@ import (
 	"time"
 
 	"github.com/bitfinexcom/bitfinex-api-go/v1"
+	"github.com/go-pg/pg"
+	"github.com/reanox/BitfinexLend/db/models"
 )
 
-func Start() {
+type Service struct {
+	bftClients []*BitfinexClient
+	db         *pg.DB
+}
+
+func New(db *pg.DB) (s *Service) {
+	return &Service{
+		bftClients: []*BitfinexClient{},
+		db:         db,
+	}
+}
+
+func (s *Service) Start() {
 	// Auto lending
 	go func() {
 		for {
-			for _, c := range BFClients {
+			for _, c := range s.bftClients {
 				lendbook := c.GetLendBook("usd", 50, 50)
 				var lendRate float64
 				if len(lendbook.Bids) == 0 {
@@ -62,7 +76,7 @@ func Start() {
 	// Cancel offer
 	go func() {
 		for {
-			for _, c := range BFClients {
+			for _, c := range s.bftClients {
 				timestamp := time.Now().Unix()
 				offers := c.GetAllFundingOffers()
 				for _, offer := range offers {
@@ -79,4 +93,48 @@ func Start() {
 			<-t.C
 		}
 	}()
+}
+
+func (s *Service) CreateNewBFClient(APIKey string, APISecret string) *BitfinexClient {
+	c := &BitfinexClient{
+		Client: NewClient(APIKey, APISecret),
+		User: &models.User{
+			APIKey:        APIKey,
+			APISecret:     APISecret,
+			MinRate:       make(map[string]float64),
+			ReserveFunds:  make(map[string]float64),
+			MaxLendAmount: make(map[string]float64),
+			MinDuration:   make(map[string]float64),
+			MaxDuration:   make(map[string]float64),
+		},
+	}
+	s.addClient(c)
+	log.Printf("CreateNewBFClient: APIKey=%s", APIKey)
+	return c
+}
+
+func (s *Service) removeClient(b *BitfinexClient) {
+	index := 0
+	for i, _b := range s.bftClients {
+		if _b == b {
+			index = i
+			break
+		}
+	}
+	s.bftClients = append(s.bftClients[:index], s.bftClients[index+1:]...)
+}
+
+func (s *Service) removeClientByKey(key string) {
+	index := 0
+	for i, _b := range s.bftClients {
+		if _b.User.APIKey == key {
+			index = i
+			break
+		}
+	}
+	s.bftClients = append(s.bftClients[:index], s.bftClients[index+1:]...)
+}
+
+func (s *Service) addClient(bfc *BitfinexClient) {
+	s.bftClients = append(s.bftClients, bfc)
 }

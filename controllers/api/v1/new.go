@@ -5,13 +5,18 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/reanox/BitfinexLend/service/bitfinexService"
+	"github.com/reanox/BitfinexLend/types"
 )
 
-func New(c *gin.Context) {
-	defer c.JSON(http.StatusOK, gin.H{
-		"status": "ok",
-	})
-	apikey := c.PostForm("apikey")
-	apisecret := c.PostForm("apisecret")
-	bitfinexService.CreateNewBFClient(apikey, apisecret)
+func New(s *bitfinexService.Service) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		defer c.JSON(http.StatusOK, types.Response{
+			Message:   "ok",
+			Status:    http.StatusOK,
+			ErrorCode: 0,
+		})
+		apikey := c.PostForm("apikey")
+		apisecret := c.PostForm("apisecret")
+		s.CreateNewBFClient(apikey, apisecret)
+	}
 }
